@@ -89,14 +89,7 @@ int Accept(int sEcoute,char *ipClient)
 	char hosts[NI_MAXHOST];
  	char ports[NI_MAXSERV];
 
-	// Mise à l'écoute de la socket
-/*	 if (listen(sEcoute,SOMAXCONN) == -1)
-	 {
-	 	perror("Erreur de listen() Serveur - ");
-	 	exit(1);
-	 }
-	 	printf("Serveur - listen() reussi !\n");
-*/
+	
 	 // Attente d'une connexion
 	 
 	 if ((sService = accept(sEcoute,NULL,NULL)) == -1)
@@ -112,6 +105,7 @@ int Accept(int sEcoute,char *ipClient)
 	 socklen_t adrClientLen = sizeof(struct sockaddr_in); // nécessaire
 	 getpeername(sService,(struct sockaddr*)&adrClient,&adrClientLen);
 	 getnameinfo((struct sockaddr*)&adrClient,adrClientLen,hosts,NI_MAXHOST,ports,NI_MAXSERV,NI_NUMERICSERV | NI_NUMERICHOST);
+	 
 	 printf("Client connecte --> Adresse IP: %s -- Port: %s\n",hosts,ports);
 
 
@@ -228,4 +222,7 @@ int Receive(int sSocket,char* data)
 
 	return i;
 }
+
+
+
 

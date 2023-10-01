@@ -10,7 +10,7 @@ all:	Server Client
 Client:	$(OBJECT)/mainclient.o $(OBJECT)/windowclient.o $(OBJECT)/moc_windowclient.o $(OBJECT)/TCP.o
 	echo Creation de Client
 	g++ -Wno-unused-parameter -o Client $(OBJECT)/TCP.o $(OBJECT)/mainclient.o $(OBJECT)/windowclient.o $(OBJECT)/moc_windowclient.o  /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so -lpthread
-Server:	server.cpp $(OBJECT)/TCP.o $(OBJECT)/Protocole.o
+Server:	server.cpp $(OBJECT)/TCP.o $(OBJECT)/ovesp.o
 	echo Creation de Server
 	g++ server.cpp $(OBJECT)/TCP.o -I $(LIB) -o Server -I/usr/include/mysql -m64 -L/usr/lib64/mysql -lmysqlclient -lpthread 
 
@@ -27,9 +27,9 @@ $(OBJECT)/mainclient.o:	$(QT)/mainclient.cpp
 $(OBJECT)/TCP.o:	$(LIB)/TCP.cpp $(LIB)/TCP.h
 	echo Creation de TCP.o
 	g++ -c $(LIB)/TCP.cpp -o $(OBJECT)/TCP.o
-$(OBJECT)/Protocole.o:	$(LIB)/Protocole.h $(LIB)/Protocole.cpp
-	echo Creation de Protocole.o
-	g++ -c $(LIB)/Protocole.cpp -o $(OBJECT)/Protocole.o -I/usr/include/mysql -m64 -L/urs/lib64/mysql -lmysqlclient
+$(OBJECT)/ovesp.o:	$(LIB)/ovesp.h $(LIB)/ovesp.cpp
+	echo Creation de ovesp.o
+	g++ -c $(LIB)/ovesp.cpp -o $(OBJECT)/ovesp.o -I/usr/include/mysql -m64 -L/urs/lib64/mysql -lmysqlclient
 
 
 clean:	

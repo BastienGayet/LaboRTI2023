@@ -7,6 +7,10 @@
 #include <unistd.h>
 #include <signal.h>
 #include "../lib/TCP.h"
+#include "../lib/ovesp.h"
+
+
+
 
 
 
@@ -21,10 +25,6 @@ int ArticleEnCours;
 
 void HandlerSIGINT(int s);
 
-void Echange(char* requete, char * reponse);
-bool PROTOCOLE_Login(const char* user, const char* password);
-void PROTOCOLE_Logout();
-void PROTOCLE_Consult(int article);
 
 WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::WindowClient)
 {
@@ -313,49 +313,72 @@ void WindowClient::closeEvent(QCloseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogin_clicked()
 {
+    //on dmd au serv si on peut se connecter 
+    // gerer l'erreur 
+    // doit faire en sorte de mettre logged=1 ; 
+    // appel a loginok
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogout_clicked()
 {
-
-
+   //on dmd au serv si on peut se deconnecter 
+    // gerer l'erreur 
+    //logged = 0 a la fin . 
+    //appel a logout ok 
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSuivant_clicked()
 {
+  // envois d'une trame au serveur en demandant l'artcileencours+1
+  
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
+   // envois d'une trame au serveur en demandant l'artcileencours-1
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonAcheter_clicked()
 {
+  // on verif la quantite ds la boite texte
+  // on dit au serveur que on achete
+  // on gere la reponse du serv 
+  // supprimer de la base de donnée
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
+    // verif si indice existe 
+    // communiquer avec le caddie/panier  , 
+    // communiquer avce le serveur 
+    
+  // rajouter dans la base de donnee les elts du caddie 
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonViderPanier_clicked()
 {
+   // rajouter dans la base de donnee les elts du caddie 
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPayer_clicked()
 {
+  // vide le panier 
+    //reset le prix a 0 
 
 }
 
@@ -365,88 +388,11 @@ void WindowClient::on_pushButtonPayer_clicked()
 void HandlerSIGINT(int s)
 {
  printf("\nArret du client.\n");
- PROTOCOLE_Logout();
+ //ovesp_Logout();
  close(sClient);
  exit(0);
 }
 
-//***** Gestion du protocole SMOP ***********************************
-bool PROTOCOLE_Login(const char* user,const char* password)
-{
- char requete[200],reponse[200];
- bool onContinue = true;
- 
- // ***** Construction de la requete *********************
-
- sprintf(requete,"LOGIN#%s#%s",user,password);
-
- // ***** Envoi requete + réception réponse **************
-
- Echange(requete,reponse);
-
- // ***** Parsing de la réponse **************************
-
- char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
- ptr = strtok(NULL,"#"); // statut = ok ou ko
- if (strcmp(ptr,"ok") == 0) printf("Login OK.\n");
- else
- {
-   ptr = strtok(NULL,"#"); // raison du ko
-   printf("Erreur de login: %s\n",ptr);
-   onContinue = false;
- }
- return onContinue;
-}
-
-//*******************************************************************
-void PROTOCOLE_Logout()
-{
- char requete[200],reponse[200];
- int nbEcrits, nbLus;
- 
- // ***** Construction de la requete *********************
- sprintf(requete,"LOGOUT");
-
- // ***** Envoi requete + réception réponse **************
- Echange(requete,reponse);
-
- // ***** Parsing de la réponse **************************
- // pas vraiment utile...
-}
-
-
-//*******************************************************************
-void PROTOCLE_Consult(int article)
-{
-  char requete[200],reponse[200];
-
-  int nbEcrits,nbLus,stock,id;
-  char intitule[200],prix[200],image[200];
-
-  // ******COnstruction de la requete ****//
-  sprintf(requete,"Consult#%d",article);
-
-  //******Envoi requete + reception réponse********
-  Echange(requete,reponse);
-
-
-
-  //*******Parsing de la reponse**********
-  char *ptr=strtok(reponse,"#"); // entete consult normalement
-  ptr = strtok(NULL,"#"); // status = ok ou ko
-
-  if(strcmp(ptr,"ok")==0)
-  {
-    ptr = strtok(NULL,"#");
-    
-  }
-
-
-
-
-
-  //w->setArticle()
-}
 
 
 //***** Echange de données entre client et serveur ******************

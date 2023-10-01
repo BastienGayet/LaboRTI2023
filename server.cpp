@@ -9,7 +9,7 @@
 #include <pthread.h>
 #include <mysql.h>
 #include "TCP.h"
-#include "Protocole.h"
+#include "ovesp.h"
 
 void HandlerSIGINT(int s);
 void TraitementConnexion(int sService);
