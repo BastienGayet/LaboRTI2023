@@ -5,14 +5,14 @@ LIB = lib
 QT = ClientQt
 CO = g++
 
-all:	Server Client
+all:	Server Client CreationBD
 
 Client:	$(OBJECT)/mainclient.o $(OBJECT)/windowclient.o $(OBJECT)/moc_windowclient.o $(OBJECT)/TCP.o
 	echo Creation de Client
 	g++ -Wno-unused-parameter -o Client $(OBJECT)/TCP.o $(OBJECT)/mainclient.o $(OBJECT)/windowclient.o $(OBJECT)/moc_windowclient.o  /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so -lpthread
 Server:	server.cpp $(OBJECT)/TCP.o $(OBJECT)/ovesp.o
 	echo Creation de Server
-	g++ server.cpp $(OBJECT)/TCP.o -I $(LIB) -o Server -I/usr/include/mysql -m64 -L/usr/lib64/mysql -lmysqlclient -lpthread 
+	g++ server.cpp $(OBJECT)/TCP.o $(OBJECT)/ovesp.o -I $(LIB) -o Server -I/usr/include/mysql -m64 -L/usr/lib64/mysql -lmysqlclient -lpthread 
 
 $(OBJECT)/moc_windowclient.o:	$(QT)/moc_windowclient.cpp
 		echo Creation de moc_windowclient.o
@@ -31,8 +31,13 @@ $(OBJECT)/ovesp.o:	$(LIB)/ovesp.h $(LIB)/ovesp.cpp
 	echo Creation de ovesp.o
 	g++ -c $(LIB)/ovesp.cpp -o $(OBJECT)/ovesp.o -I/usr/include/mysql -m64 -L/urs/lib64/mysql -lmysqlclient
 
+CreationBD:	BD_Maraicher/CreationBD.cpp
+	echo Creation de CreationBD
+	g++ -o BD_Maraicher/CreationBD BD_Maraicher/CreationBD.cpp -I/usr/include/mysql -m64 -L/usr/lib64/mysql -lmysqlclient -lpthread -lz -lm -lrt -lssl -lcrypto -ldl
+
 
 clean:	
 	rm -f Client
 	rm -f Server
 	rm -f $(OBJECT)/*.o
+	rm -f BD_Maraicher/CreationBD

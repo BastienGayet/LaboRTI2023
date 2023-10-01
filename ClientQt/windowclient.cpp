@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include "../lib/TCP.h"
-#include "../lib/ovesp.h"
+
 
 
 
@@ -24,6 +24,17 @@ int sClient;
 int ArticleEnCours;
 
 void HandlerSIGINT(int s);
+
+void Echange(char* requete, char* reponse);
+
+
+//bool ovesp_Login(const char* user, const char* password);
+void ovesp_Logout();
+void ovesp_Consult(int idArticle);
+//void ovesp_Achat(int idArticle,int quantite );
+//void ovsp_Cancel(int idArticle);
+//void ovsp_CancelAll();
+//void ovsp_Close();
 
 
 WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::WindowClient)
@@ -65,7 +76,7 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     }
 
     //Conexion sur le serveur
-    if((sClient = ClientSocket("127.0.0.1",1500))==-1)
+    if((sClient = ClientSocket("127.0.0.1",10000))==-1)
     {
       perror("Erreur de ClientSocket");
       exit(1);
@@ -318,15 +329,18 @@ void WindowClient::on_pushButtonLogin_clicked()
     // doit faire en sorte de mettre logged=1 ; 
     // appel a loginok
 
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogout_clicked()
 {
-   //on dmd au serv si on peut se deconnecter 
-    // gerer l'erreur 
-    //logged = 0 a la fin . 
-    //appel a logout ok 
+    
+  ovesp_Logout();
+  logoutOK();
+  setMotDePasse("");
+  setNom("");
+
 }
 
 
@@ -335,6 +349,8 @@ void WindowClient::on_pushButtonLogout_clicked()
 void WindowClient::on_pushButtonSuivant_clicked()
 {
   // envois d'une trame au serveur en demandant l'artcileencours+1
+
+  ovesp_Consult(ArticleEnCours+1);
   
 
 }
@@ -343,6 +359,8 @@ void WindowClient::on_pushButtonSuivant_clicked()
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
    // envois d'une trame au serveur en demandant l'artcileencours-1
+
+  ovesp_Consult(ArticleEnCours-1);
 
 }
 
@@ -388,9 +406,76 @@ void WindowClient::on_pushButtonPayer_clicked()
 void HandlerSIGINT(int s)
 {
  printf("\nArret du client.\n");
- //ovesp_Logout();
+ ovesp_Logout();
  close(sClient);
  exit(0);
+}
+
+//***** Gestion du protocole SMOP ***********************************
+bool ovesp_Login(const char* user,const char* password)
+{
+   char requete[200],reponse[200];
+   bool onContinue = true;
+   
+   // ***** Construction de la requete *********************
+   sprintf(requete,"LOGIN#%s#%s",user,password);
+   // ***** Envoi requete + réception réponse **************
+   Echange(requete,reponse);
+   // ***** Parsing de la réponse **************************
+   char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
+   ptr = strtok(NULL,"#"); // statut = ok ou ko
+   if (strcmp(ptr,"ok") == 0) printf("Login OK.\n");
+   else
+   {
+   ptr = strtok(NULL,"#"); // raison du ko
+   printf("Erreur de login: %s\n",ptr);
+   onContinue = false;
+   }
+   return onContinue;
+}
+void ovesp_Logout()
+{
+   char requete[200],reponse[200];
+   int nbEcrits, nbLus;
+   
+   // ***** Construction de la requete *********************
+   sprintf(requete,"LOGOUT");
+   // ***** Envoi requete + réception réponse **************
+   Echange(requete,reponse);
+   // ***** Parsing de la réponse **************************
+   // pas vraiment utile...
+}
+
+void ovesp_Consult(int idArticle)
+{
+   char requete[200],reponse[200];
+
+   int nbEcrits,nbLus,stock, id;
+   float prix;
+   char intitule[200],image[200];
+
+
+    // ***** Construction de la requete *********************
+   sprintf(requete,"CONSULT#%d",idArticle);
+   // ***** Envoi requete + réception réponse **************
+   Echange(requete,reponse);
+   // ***** Parsing de la réponse **************************
+
+   char * ptr = strtok(reponse,"#"); // entete = CONSULT normalement 
+   ptr = strtok(NULL,"#"); // 
+
+   if(strcmp(ptr,"ok")==0)
+   {
+    ArticleEnCours = atoi(strtok(NULL,"#"));
+    strcpy(intitule,strtok(NULL,"#"));
+    stock= atoi(strtok(NULL,"#"));
+    prix = atof(strtok(NULL,"#"));
+    strcpy(image,strtok(NULL,"#"));
+
+    w->setArticle(intitule,prix,stock,image);
+   }
+
+
 }
 
 

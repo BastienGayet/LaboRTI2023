@@ -1,10 +1,10 @@
-#include "ovesp.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <mysql.h>
+#include "ovesp.h"
 
 
 //**********Etat du protocole : Liste des clients loggés ***************
@@ -23,7 +23,7 @@ char requete[200];
 
 
 //***************** Parsing de la requete******************
-bool ovsp(char * requete, char * reponse, int socket, MYSQL* connexion, CaddieArticle caddie[21])
+bool ovesp(char * requete, char * reponse, int socket, MYSQL* connexion, CaddieArticle caddie[21])
 {
 	int idArticle = 0; 
 
@@ -37,7 +37,7 @@ bool ovsp(char * requete, char * reponse, int socket, MYSQL* connexion, CaddieAr
  	if (strcmp(ptr,"LOGIN") == 0)
  	{
  		char user[50], password[50];
- 		int isNouveauclient = 0;
+ 		int isNouveauClient = 0;
 
  		strcpy(user,strtok(NULL,"#"));
  		strcpy(password,strtok(NULL,"#"));
@@ -50,7 +50,7 @@ bool ovsp(char * requete, char * reponse, int socket, MYSQL* connexion, CaddieAr
  		}
  		else
  		{
- 			if(ovsp_Login(user,password,isNouveauclient))
+ 			/*if(ovesp_Login(user,password,isNouveauClient))
  			{
  				sprintf(reponse,"LOGIN#OK");
  				ajoute(socket);
@@ -62,7 +62,7 @@ bool ovsp(char * requete, char * reponse, int socket, MYSQL* connexion, CaddieAr
  			{
  				sprintf(reponse,"LOGIN#ko#Mauvais identifiants !");
  				return false;
- 			}
+ 			}*/
  		}
  	}
 
@@ -92,36 +92,7 @@ bool ovsp(char * requete, char * reponse, int socket, MYSQL* connexion, CaddieAr
 }
 
 
-ARTICLE ovsp_Consult(int idArticle, MYSQL* connexion)
-{
-	ARTICLE reponse;
- 	MYSQL_RES *resultat;
- 	MYSQL_ROW Tuple;
 
- 	//ACCESBD
-
- 	sprintf(requete,"Select *from articles where id= %d",idArticle); // recup les infos de l'articles en fonction de l'id
- 	mysql_query(connexion, requete); // excecution de la requete 
-
- 	resultat= mysql_store_result(connexion);
-
- 	if(resultat && idArticle>0 && idArticle<22)
- 	{
- 		Tuple = mysql_fetch_row(resultat);
-
- 		printf("ACCESBD RESULTAT : %d,%s,%d,%f,%s\n", Tuple[0],Tuple[1],Tuple[2],Tuple[3],Tuple[4]);
- 		reponse.idArticle= atoi(Tuple[0]);
- 		strcpy(reponse.intitule,Tuple[1]);
- 		reponse.prix= atof(Tuple[2]);
- 		reponse.stock=atoi(Tuple[3]);
- 		strcpy(reponse.image,Tuple[4]);
-
-
- 		
-
- 	}
-
-}
 
 //***** Gestion de l'état du protocole ******************************
 int estPresent(int socket)
@@ -182,4 +153,41 @@ void ovsp_Close()
  }
  
  pthread_mutex_unlock(&mutexClients);
+}
+
+
+
+//***********TRAITEMENT REQUETE*************************
+ARTICLE ovesp_Consult(int idArticle, MYSQL* connexion)
+{
+	ARTICLE reponse;
+ 	MYSQL_RES *resultat;
+ 	MYSQL_ROW Tuple;
+
+ 	//ACCESBD
+
+ 	sprintf(requete,"Select *from articles where id= %d",idArticle); // recup les infos de l'articles en fonction de l'id
+ 	mysql_query(connexion, requete); // excecution de la requete 
+
+ 	resultat= mysql_store_result(connexion);
+
+ 	if(resultat && idArticle>0 && idArticle<22)
+ 	{
+ 		Tuple = mysql_fetch_row(resultat);
+
+ 		printf("ACCESBD RESULTAT : %d,%s,%d,%f,%s\n", Tuple[0],Tuple[1],Tuple[2],Tuple[3],Tuple[4]);
+ 		reponse.idArticle= atoi(Tuple[0]);
+ 		strcpy(reponse.intitule,Tuple[1]);
+ 		reponse.prix= atof(Tuple[2]);
+ 		reponse.stock=atoi(Tuple[3]);
+ 		strcpy(reponse.image,Tuple[4]);
+
+ 	}
+ 	else
+ 	{
+ 		reponse.idArticle = -1;
+ 	}
+
+ 	return reponse;
+
 }

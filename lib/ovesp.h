@@ -23,9 +23,9 @@ typedef struct
 }CaddieArticle;
 
 
-bool ovsp(char* requete, char* reponse , int socket, MYSQL* connexion, CaddieArticle caddie[21]);
-bool ovsp_Login(const char* user, const char* password,bool IsNouveauClient);
-ARTICLE ovsp_Consult(int idArticle, MYSQL* connexion);
+bool ovesp(char* requete, char* reponse , int socket, MYSQL* connexion, CaddieArticle caddie[21]);
+bool ovesp_Login(const char* user, const char* password, int IsNouveauClient);
+ARTICLE ovesp_Consult(int idArticle, MYSQL* connexion);
 int ovesp_Achat(int idArticle, MYSQL* connexion, int quantite , CaddieArticle caddie[21]);
 bool ovsp_Cancel(int idArticle,MYSQL* connexion,CaddieArticle caddie[21]);
 bool ovsp_CancelAll(MYSQL* connexion,CaddieArticle caddie[21]);
