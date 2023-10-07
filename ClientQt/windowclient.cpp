@@ -73,7 +73,7 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     }
 
     //Conexion sur le serveur
-    if((sClient = ClientSocket("127.0.0.1",10000))==-1)
+    if((sClient = ClientSocket("127.0.0.1",15000))==-1)
     {
       perror("Erreur de ClientSocket");
       exit(1);
@@ -336,6 +336,8 @@ void WindowClient::on_pushButtonLogin_clicked()
    if(strcmp(ptr,"ok")==0)
    {
     w->dialogueMessage("Connexion réussi!",reponse);
+    loginOK();
+
     //return true;
    }
    else
@@ -365,10 +367,8 @@ void WindowClient::on_pushButtonLogout_clicked()
    // ***** Parsing de la réponse **************************
    // pas vraiment utile...
 
-   
   logoutOK();
-  setMotDePasse("");
-  setNom("");
+ 
 
 }
 
@@ -377,14 +377,12 @@ void WindowClient::on_pushButtonLogout_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSuivant_clicked()
 {
-  // envois d'une trame au serveur en demandant l'artcileencours+1
+
   char requete[200],reponse[200];
 
   int nbEcrits,nbLus,stock, id;
   float prix;
   char intitule[200],image[200];
-
-
 
 
   // ***** Construction de la requete *********************
@@ -404,23 +402,24 @@ void WindowClient::on_pushButtonSuivant_clicked()
     prix = atof(strtok(NULL,"#"));
     strcpy(image,strtok(NULL,"#"));
 
+    /*// pour convertir le "."" en "," pour le prix
+    for (char* p = prix; *p; ++p) {
+    if (*p == '.') {
+        *p = ','; // Remplacez la virgule par un point
+    }*/
 
-    w->setArticle(intitule,prix,stock,image);
 
-    id++;
+      w->setArticle(intitule,prix,stock,image);
+
+      id++;
+    
   }
-
-  
-  
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
-   // envois d'une trame au serveur en demandant l'artcileencours-1
 
-    // envois d'une trame au serveur en demandant l'artcileencours+1
   char requete[200],reponse[200];
 
   int nbEcrits,nbLus,stock, id;

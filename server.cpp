@@ -69,7 +69,7 @@ int main(int argc, char * argv[])
  		exit(1);
  	}
 
- 	connexion = mysql_init(NULL);
+ 	/*connexion = mysql_init(NULL);
   if (mysql_real_connect(connexion,"localhost","Student","PassStudent1_","PourStudent",0,0,0) == NULL)
   {
     fprintf(stderr,"(ACCESBD) Erreur de connexion à la base de données...\n");
@@ -78,7 +78,7 @@ int main(int argc, char * argv[])
   else
   {
   	fprintf(stderr,"Connexion reussie à la base de données...\n");
-  }
+  }*/
 
  	// Mise en boucle du serveur
 	int sService;
@@ -208,6 +208,7 @@ void TraitementConnexion(int sService)
 
 
    printf("\t[THREAD %p] Reponse envoyee = %s\n",pthread_self(),reponse);
+ 
 
    if (!onContinue)
    {

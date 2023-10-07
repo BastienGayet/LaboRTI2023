@@ -41,14 +41,14 @@ bool ovesp(char * requete, char * reponse, int socket)//, MYSQL* connexion)
  	if (strcmp(ptr,"LOGIN") == 0) // aller vour base d eoner si log 
  	{
  		char user[50], password[50];
- 		char newClient[10];
+ 		int newClient;
  		int retour;
  		MYSQL_RES *resultat;
 	 	MYSQL_ROW Tuple;
 
  		strcpy(user,strtok(NULL,"#"));
  		strcpy(password,strtok(NULL,"#"));
- 		strcpy(newClient,strtok(NULL,"#"));
+ 		newClient= atoi(strtok(NULL,"#"));
  		printf("\t[THREAD %p] LOGIN de %s\n",pthread_self(),user);
 
  		if(estPresent(socket)>=0) // client déja loggé
@@ -97,7 +97,7 @@ bool ovesp(char * requete, char * reponse, int socket)//, MYSQL* connexion)
 			}
 			else
 			{
-				sprintf(requete,"Select * from clients where nom like %s",user);
+				sprintf(requete,"Select * from clients where nom like '%s'",user);
 
 				mysql_query(my_connexion, requete);
 				resultat = mysql_store_result(my_connexion);
@@ -123,6 +123,8 @@ bool ovesp(char * requete, char * reponse, int socket)//, MYSQL* connexion)
 					return sprintf(reponse,"LOGIN#KO#Erreur dans la requete SQL2"); // probleme lors de la requete
 				}
 			}
+
+			return true;
 
 		}	
  		
@@ -174,21 +176,35 @@ bool ovesp(char * requete, char * reponse, int socket)//, MYSQL* connexion)
  	//*******ACHAT***************************
  	else if(strcmp(ptr,"ACHAT")==0)
  	{
+ 		MYSQL_RES *resultat;
+	 	MYSQL_ROW Tuple;
+	 	char requete[200];
 
  	}
  	//*******CADDIE***************************
  	else if(strcmp(ptr,"CADDIE")==0)
  	{
+ 		MYSQL_RES *resultat;
+	 	MYSQL_ROW Tuple;
+	 	char requete[200];
 
  	}
  	//*******CANCEL***************************
  	else if(strcmp(ptr,"CANCEL")==0)
  	{
+ 		MYSQL_RES *resultat;
+	 	MYSQL_ROW Tuple;
+	 	char requete[200];
 
  	}
  	//*******CANCEL_ALL***************************
  	else if(strcmp(ptr,"CANCEL_ALL")==0)
  	{
+ 		MYSQL_RES *resultat;
+	 	MYSQL_ROW Tuple;
+	 	char requete[200];
+
+	 	
 
  	}
  	//*******LOGOUT***************************
