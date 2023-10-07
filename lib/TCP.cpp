@@ -33,7 +33,7 @@
 		 hints.ai_socktype = SOCK_STREAM;
 		 hints.ai_flags = AI_PASSIVE | AI_NUMERICSERV; // pour une connexion passive
 
-		 char buffer[5];
+		 char buffer[6];
 		 sprintf(buffer,"%d",port);
 
 		 if (getaddrinfo(NULL,buffer,&hints,&results) != 0)
@@ -120,6 +120,8 @@ int ClientSocket(char* ipServeur,int portServeur)
 {
 	int sClient;
 
+	 printf("PID du processus : %d\n", getpid());
+
 	//Creation de la socket
 
 	if((sClient = socket(AF_INET,SOCK_STREAM,0))==-1)
@@ -136,11 +138,11 @@ int ClientSocket(char* ipServeur,int portServeur)
 	struct addrinfo hints;
 	struct addrinfo *results;
 	memset(&hints,0,sizeof(struct addrinfo));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_NUMERICSERV;
+	hints.ai_family = AF_INET; // Utilisie IPv4
+	hints.ai_socktype = SOCK_STREAM; // Utilise protocole TCP
+	hints.ai_flags = AI_NUMERICSERV; // Le port est en format numerique
 
-	char buffer[5];
+	char buffer[6];
 	sprintf(buffer,"%d",portServeur);
 
 	if(getaddrinfo(ipServeur,buffer,&hints,&results)!=0)
@@ -152,7 +154,7 @@ int ClientSocket(char* ipServeur,int portServeur)
 
 	if(connect(sClient,results->ai_addr,results->ai_addrlen)==-1)
 	{
-		perror("Client - Erreur de connect CLient");
+		perror("Client - Erreur de connect Client");
 		exit(1);
 	}
 

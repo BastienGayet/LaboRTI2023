@@ -1,5 +1,5 @@
-#ifndef PROTOCOLE_H
-#define PROTOCOLE_H
+#ifndef OVESP_H
+#define OVESP_H
 #define NB_MAX_CLIENTS 20
 #include <mysql.h>
 
@@ -23,12 +23,12 @@ typedef struct
 }CaddieArticle;
 
 
-bool ovesp(char* requete, char* reponse , int socket, MYSQL* connexion, CaddieArticle caddie[21]);
-bool ovesp_Login(const char* user, const char* password, int IsNouveauClient);
-ARTICLE ovesp_Consult(int idArticle, MYSQL* connexion);
-int ovesp_Achat(int idArticle, MYSQL* connexion, int quantite , CaddieArticle caddie[21]);
-bool ovsp_Cancel(int idArticle,MYSQL* connexion,CaddieArticle caddie[21]);
-bool ovsp_CancelAll(MYSQL* connexion,CaddieArticle caddie[21]);
-void ovsp_Close();
+bool ovesp(char* requete, char* reponse , int socket);// ouvre la dedans la connexion base de donnee et mettre les autre fonctions dedans
+int ovesp_Login(const char* user, const char* password, int IsNouveauClient);
+void ovesp_Consult(int idArticle);
+int ovesp_Achat(int idArticle, int quantite);
+bool ovesp_Cancel(int idArticle);
+bool ovesp_CancelAll();
+void ovesp_Close();
 
 #endif

@@ -36,6 +36,8 @@ int main(int argc, char * argv[])
 		exit(1);
 	}
 
+
+
 	// Initialisation socketsAcceptees
 	pthread_mutex_init(&mutexSocketsAcceptees,NULL);
  	pthread_cond_init(&condSocketsAcceptees,NULL);
@@ -90,7 +92,7 @@ int main(int argc, char * argv[])
 	 {
 	   perror("Erreur de Accept");
 	   close(sEcoute);
-	   //SMOP_Close();
+	   ovesp_Close();
 	   exit(1);
 	 }
 
@@ -130,7 +132,7 @@ void HandlerSIGINT(int s)
  		close(socketsAcceptees[i]);
  }
  pthread_mutex_unlock(&mutexSocketsAcceptees);
- //SMOP_Close();
+ ovesp_Close();
  mysql_close(connexion);// ferme la connexion sql
  exit(0);
 }
@@ -193,7 +195,7 @@ void TraitementConnexion(int sService)
 
    printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
    // ***** Traitement de la requete ***********
-  // onContinue = SMOP(requete,reponse,sService);
+  onContinue = ovesp(requete,reponse,sService);
 
 
    // ***** Envoi de la reponse ****************

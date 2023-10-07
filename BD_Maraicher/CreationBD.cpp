@@ -13,6 +13,8 @@ typedef struct
   char  image[20];
 } ARTICLE;
 
+
+
 ARTICLE Elm[] = 
 {
   {-1,"carottes",2.16f,9,"carottes.jpg"},
@@ -38,8 +40,10 @@ ARTICLE Elm[] =
   {-1,"tomates",5.49f,22,"tomates.jpg"}
 };
 
+
 int main(int argc,char *argv[])
 {
+   char requete[256];
   // Connection a MySql
   printf("Connection a la BD...\n");
   MYSQL* connexion = mysql_init(NULL);
@@ -47,19 +51,50 @@ int main(int argc,char *argv[])
 
   // Creation d'une table UNIX_FINAL
   printf("Creation de la table articles...\n");
-  mysql_query(connexion,"drop table articles;"); // au cas ou elle existerait deja
+   // au cas ou elles existeraient deja
+  mysql_query(connexion,"drop table articles;"); 
+  mysql_query(connexion,"drop table clients;");
+  mysql_query(connexion,"drop table factures;");
+
+
+
   mysql_query(connexion,"create table articles (id INT(4) auto_increment primary key, intitule varchar(20),prix FLOAT(4),stock INT(4),image varchar(20));");
+  mysql_query(connexion,"create table clients (id INT(4) auto_increment primary key,nom varchar(50),mdp varchar(50));");
+  mysql_query(connexion,"create table factures (id INT(4) auto_increment primary key, idClient INT(4), prix FLOAT(4), stock INT(4), paye BOOLEAN);");
+
+   printf("Ajout de quelques clients...\n");
+
+  sprintf(requete,"insert into clients values (NULL, 'a', 'a');"); // on met NULL dans le premier champs car c'est l'id qui s'auto incremente
+  mysql_query(connexion,requete);
+
+  sprintf(requete,"insert into clients values (NULL, 'bastien', 'abc123');"); // on met NULL dans le premier champs car c'est l'id qui s'auto incremente
+  mysql_query(connexion,requete);
+
 
   // Ajout de tuples dans la table UNIX_FINAL
   printf("Ajout de 21 articles la table articles...\n");
-  char requete[256];
+ 
   for (int i=0 ; i<21 ; i++)
   {
 	  sprintf(requete,"insert into articles values (NULL,'%s',%f,%d,'%s');",Elm[i].intitule,Elm[i].prix,Elm[i].stock,Elm[i].image);
 	  mysql_query(connexion,requete);
   }
 
+ 
+
+  printf("Ajout de quelques factures\n");
+
+  sprintf(requete,"insert into factures values (NULL, 1, 57.23, 17, false);"); // on met NULL dans le premier champs car c'est l'id qui s'auto incremente
+  mysql_query(connexion,requete);
+
+  
+
   // Deconnection de la BD
   mysql_close(connexion);
   exit(0);
 }
+
+
+
+
+
